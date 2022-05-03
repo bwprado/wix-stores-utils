@@ -40,45 +40,38 @@ const createOptionsArray = (product) => {
 }
 
 /**
- * @author Bruno Prado
- * @description - This is the namespace to be exported
- * @typedef {Object} wixStoresUtils
+ * @typedef productOptionsAvailable
+ * @type {Object}
+ * @property {String} optionKey - First option of the product
+ * @property {String} optionKey - Second option of the product
  */
-export const wixStoresUtils = {
-	/**
-	 * @typedef productOptionsAvailable
-	 * @type {Object}
-	 * @property {String} optionKey - First option of the product
-	 * @property {String} optionKey - Second option of the product
-	 */
 
-	/**
-	 * @author Bruno Prado
-	 * @function getOptionsStockAvailability
-	 * @description - This function checks wich product options are available for purchase
-	 * @param {Object} currentProduct - WIX Store product object
-	 * @returns {Promise.<productOptionsAvailable[]>} - Array of product options available for purchase
-	 */
-	async getOptionsStockAvailability(currentProduct) {
-		if (!currentProduct) throw new Error('Product is required')
+/**
+ * @author Bruno Prado
+ * @function getOptionsStockAvailability
+ * @description - This function checks wich product options are available for purchase
+ * @param {Object} currentProduct - WIX Store product object
+ * @returns {Promise.<productOptionsAvailable[]>} - Array of product options available for purchase
+ */
+export const getOptionsStockAvailability = async (currentProduct) => {
+	if (!currentProduct) throw new Error('Product is required')
 
-		const allProductOptions = createOptionsArray(currentProduct)
-		const arrayOfPromises = allProductOptions.map((option) =>
-			wixStoresBackend.getProductOptionsAvailability(currentProduct._id, option)
-		)
-		const result = await Promise.all(arrayOfPromises)
-		let choicesInStock = allProductOptions.map((item, index) => ({
-			...item,
-			inStock: result[index].availableForPurchase,
-		}))
+	const allProductOptions = createOptionsArray(currentProduct)
+	const arrayOfPromises = allProductOptions.map((option) =>
+		wixStoresBackend.getProductOptionsAvailability(currentProduct._id, option)
+	)
+	const result = await Promise.all(arrayOfPromises)
+	let choicesInStock = allProductOptions.map((item, index) => ({
+		...item,
+		inStock: result[index].availableForPurchase,
+	}))
 
-		return choicesInStock
-			.filter(({ inStock }) => inStock === true)
-			.map(({ inStock, ...choices }) => {
-				return {
-					_id: uuid(),
-					...choices,
-				}
-			})
-	},
+	return choicesInStock
+		.filter(({ inStock }) => inStock === true)
+		.map(({ inStock, ...choices }) => {
+			return {
+				_id: uuid(),
+				...choices,
+			}
+		})
 }
