@@ -1,45 +1,50 @@
 import wixStoresBackend from 'wix-stores-backend'
 import { v4 as uuid } from 'uuid'
 
-const wixStoresUtils = {
-	/**
-	 * @typedef everyProductOption
-	 * @type {Object}
-	 * @property {String} optionKey - First option of the product
-	 * @property {String} optionKey - Second option of the product
-	 */
+/**
+ * @typedef everyProductOption
+ * @type {Object}
+ * @property {String} optionKey - First option of the product
+ * @property {String} optionKey - Second option of the product
+ */
 
-	/**
-	 * @author Bruno Prado
-	 * @function createOptionsArray
-	 * @description - This function creates an array of products options that will be used to check availability
-	 * @param {Object} product - WIX Store product object
-	 * @returns {Array.<everyProductOption>} - Array of product options
-	 */
-	createOptionsArray(product) {
-		const { productOptions } = product
-		const keys = Object.keys(productOptions)
-		const choices = keys.map((key) =>
-			productOptions[key].choices.map((choice) => {
+/**
+ * @author Bruno Prado
+ * @function createOptionsArray
+ * @description - This function creates an array of products options that will be used to check availability
+ * @param {Object} product - WIX Store product object
+ * @returns {Array.<everyProductOption>} - Array of product options
+ */
+const createOptionsArray = (product) => {
+	const { productOptions } = product
+	const keys = Object.keys(productOptions)
+	const choices = keys.map((key) =>
+		productOptions[key].choices.map((choice) => {
+			return {
+				[key]: choice.description,
+			}
+		})
+	)
+	if (choices.length < 2) return choices.flat()
+	const [a, b] = choices
+	return b
+		.map((s) =>
+			a.map((c) => {
 				return {
-					[key]: choice.description,
+					[keys[0]]: c[keys[0]],
+					[keys[1]]: s[keys[1]],
 				}
 			})
 		)
-		if (choices.length < 2) return choices.flat()
-		const [a, b] = choices
-		return b
-			.map((s) =>
-				a.map((c) => {
-					return {
-						[keys[0]]: c[keys[0]],
-						[keys[1]]: s[keys[1]],
-					}
-				})
-			)
-			.flat()
-	},
+		.flat()
+}
 
+/**
+ * @author Bruno Prado
+ * @description - This is the namespace to be exported
+ * @typedef {Object} wixStoresUtils
+ */
+export const wixStoresUtils = {
 	/**
 	 * @typedef productOptionsAvailable
 	 * @type {Object}
@@ -57,7 +62,7 @@ const wixStoresUtils = {
 	async getOptionsStockAvailability(currentProduct) {
 		if (!currentProduct) throw new Error('Product is required')
 
-		const allProductOptions = this.createOptionsArray(currentProduct)
+		const allProductOptions = createOptionsArray(currentProduct)
 		const arrayOfPromises = allProductOptions.map((option) =>
 			wixStoresBackend.getProductOptionsAvailability(currentProduct._id, option)
 		)
@@ -77,5 +82,3 @@ const wixStoresUtils = {
 			})
 	},
 }
-
-export default wixStoresUtils
