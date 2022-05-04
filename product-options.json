@@ -1,0 +1,78 @@
+{
+  "Tamanho": {
+      "optionType": "drop_down",
+      "name": "Tamanho",
+      "choices": [
+          {
+              "value": "PP",
+              "description": "PP",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "P",
+              "description": "P",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "M",
+              "description": "M",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "G",
+              "description": "G",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          }
+      ]
+  },
+  "Cores": {
+      "optionType": "drop_down",
+      "name": "Cores",
+      "choices": [
+          {
+              "value": "Azul Marinho",
+              "description": "Azul Marinho",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "Preto",
+              "description": "Preto",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "Vinho",
+              "description": "Vinho",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          },
+          {
+              "value": "Mescla",
+              "description": "Mescla",
+              "inStock": true,
+              "visible": true,
+              "mainMedia": null,
+              "mediaItems": []
+          }
+      ]
+  }
+}
