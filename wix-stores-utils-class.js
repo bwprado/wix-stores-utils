@@ -1,6 +1,24 @@
 import { v4 as uuid } from 'uuid'
 import wixStores from 'wix-stores'
 
+export default class wixStoresUtilities {
+  constructor(currentProduct) {
+    this.currentProduct = currentProduct
+    this.availableProductOptions = {},
+		this.availableColors = null,
+		this.availableSizes = null,
+		this.productOptionsInStock = null,
+		this.colorKey = null,
+		this.sizeKey = null,
+		this.selectedProduct = {
+			productId = currentProduct._id,
+			quantity = 0,
+			options = {
+				choices = {},
+			},
+		},
+  }
+}
 const wixStoresUtilities = (currentProduct) => {
 	if (!currentProduct) throw new Error('Product is required!')
 	/**
@@ -14,9 +32,10 @@ const wixStoresUtilities = (currentProduct) => {
 	 * @author Bruno Prado
 	 * @function createOptionsArray
 	 * @description - This function creates an array of products options that will be used to check availability
+	 * @param {Object} product - WIX Store product object
 	 * @returns {Array.<everyProductOption>} - Array of product options
 	 */
-	const createOptionsArray = () => {
+	const createOptionsArray = (currentProduct) => {
 		const { productOptions } = currentProduct
 		const keys = Object.keys(productOptions)
 		const choices = keys.map((key) =>
@@ -66,10 +85,11 @@ const wixStoresUtilities = (currentProduct) => {
 		 * @author Bruno Prado
 		 * @function getProductOptionsInStock
 		 * @description - This function checks wich product options are available for purchase
+		 * @param {Object} currentProduct - WIX Store product object
 		 * @returns {Promise.<availableProductOptions[]>} - Array of product options available for purchase
 		 */
 		async getProductOptionsInStock() {
-			const allProductOptions = createOptionsArray()
+			const allProductOptions = createOptionsArray(currentProduct)
 			const arrayOfPromises = allProductOptions.map((option) =>
 				wixStores.getProductOptionsAvailability(currentProduct._id, option)
 			)
@@ -168,7 +188,8 @@ const wixStoresUtilities = (currentProduct) => {
 			if (selectedOptions === 0) throw new Error('No option selected!')
 			if ((this.colorKey && this.sizeKey && true) || false) {
 				if (selectedOptions === 1) throw new Error('More options required!')
-				await wixStores.cart.addProducts([this.selectedProduct])
+				const test = await wixStores.cart.addProducts([this.selectedProduct])
+				console.log(test)
 			} else {
 				await wixStores.cart.addProducts([this.selectedProduct])
 			}
