@@ -12,48 +12,74 @@ This package contains everything you need to work with.
 
 2 - Import the package in your code:
 
-To import backend functions, use the following syntax:
+To import the package to your project, do the following:
 
 ```js
-import { getProductOptionsAvailability } from '@bwprado/wix-stores-utils-backend'
+import wixStoresUtilities from '@bwprado/wix-stores-utils'
 ```
 
-To import public functions, use the following syntax:
+First you need to get the current product being displayed in the default product page of you WIX Store, like so:
 
 ```js
-import { getProductOptionsAvailability } from '@bwprado/wix-stores-utils'
+const currentProduct = await $w('#productPage1').getProduct()
 ```
 
-### Content
+After that, you have to initialize the package with the current product, that way, the WIX Store Utilities will know everything about the current product.
 
-This package contains important functions to help enhance WIX Stores usability.
+```js
+const wixStoresUtils = wixStoresUtilities(currentProduct)
+```
+
+You will have access to many methods and properties that will help you create a custom product page for your WIX Store.
+
+### Package Content
+
+This package contains important public methods and properties to help enhance WIX Stores usability.
+
+- **get-product-options-in-stock**
+
+This method gets all the available product options in stock with all the possible combinations.
+
+```js
+const allProductOptionsInStock = await wixStoresUtils.getProductOptionsInStock()
+```
+
+
+**set-color-key**
+
+This method is used to set the name of the key related to the product options, because it is not default and it is user customizable, making it hard to predict. You give the method the probable name in the language you defined and it returns and sets the correct one. For example, let's say someone in Brazil creates a product with different colors. When setting up the product, it calls the options _"Cores"_ ("Colors" in english). As it is not default, the package has to figure it out so it can define the color key that will help with the text and the option selection.
+
+```js
+wixStoresUtils.setColorKey('Cores', 'Cor', 'Estampa', 'Estampas')
+```
 
 ### Examples
 
-Just import the `getProductOptionsAvailability()` function to your project, and feed the current product object into it.
+You need to import the `wixStoresUtilities` to your project and initialize it with the current product from the product page.
 
 ```js
-import { getProductOptionsAvailability } from '@bwprado/wix-stores-utils-backend'
+import wixStoresUtilities from '@bwprado/wix-stores-utils'
 
-$w.onReady(() => {
-    $w('#dynamicDataset').onReady(async () =>
-        const currentProduct = $w('#dynamicDataset').getCurrentItem()
-        const availableOptions = await getProductOptionsAvailability(currentProduct)
-    })
+$w.onReady(async () => {
+	// Get the current product from the product page.
+	const currentProduct = await $w('#productPage1').getProduct()
+
+	// Destructuring all the properties you are going to need.
+	const { name, description, mainMedia, mediaItems, formattedPrice, ribbons } =
+		currentProduct
+
+	// Initializing the object.
+	wixStoresUtils = wixStoresUtilities(currentProduct)
+
+	// Checking for product options in stock.
+	wixStoresUtils.setProductOptionsInStock(
+		await wixStoresUtils.getProductOptionsInStock()
+	)
+
+	// Initializing the colors atributes.
+	wixStoresUtils.setColorKey('Cor', 'Cores', 'Estampa', 'Estampas')
+
+	// Initializing the sizes atributes.
+	wixStoresUtils.setSizeKey('Tamanho', 'Tamanhos', 'Pontuação', 'Pontuações')
 })
-```
-
-The expected result should be an array of available product options objects.
-
-```js
-[
-    {
-        "Color": "Black",
-        "Size": "11,
-    },
-    {
-        "Color": "Black",
-        "Size": "12,
-    },
-]
 ```
