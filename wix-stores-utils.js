@@ -184,6 +184,23 @@ const wixStoresUtilities = (currentProduct) => {
 					}
 				})
 		},
+		async getCartInfo() {
+			const cartInfo = await wixStores.cart.getCurrentCart()
+			let { lineItems, ...rest } = cartInfo
+			if (lineItems.length > 0) {
+				return {
+					rest,
+					lineItems: lineItems.map(({ id, ...item }) => {
+						return {
+							_id: uuid(),
+							...item,
+						}
+					}),
+				}
+			} else {
+				return null
+			}
+		},
 	}
 	utils.getProductOptions()
 	return utils
